@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+html,
+body {
+  @apply relative h-full w-full font-roboto font-normal overflow-hidden;
+}
+
+#root {
+  @apply relative min-h-dvh w-full;
+}
+
+@layer utilities {
+  .container {
+    @apply mx-auto flex flex-col items-center flex-grow;
+    width: calc(100% - 17px * 2);
+  }
+}
