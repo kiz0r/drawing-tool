@@ -1,8 +1,8 @@
 import { Eraser, PaintBucket, Pencil, X } from 'lucide-react';
 import Button from '../Button';
-import useDrawingContext from '../../hooks/useDrawingContext';
+import { useDrawingContext } from '../../hooks';
 import { MAX_LINE_WIDTH, MIN_LINE_WIDTH } from '../../constants';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ColorModal, CanvasBgModal } from '../modals';
 
 type ToolsPanelModals = 'color' | 'figure' | 'canvas-background';

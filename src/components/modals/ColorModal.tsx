@@ -19,14 +19,14 @@ const ColorModal = (props: ModalProps) => {
           <Button
             disabled={lineWidth <= MIN_LINE_WIDTH}
             onClick={decreaseLineWidth}
-            tooltip="decrease"
+            tooltip="Decrease"
             icon={<Minus width={28} />}
           ></Button>
           <span className="font-semibold text-[20px]">{lineWidth}</span>
           <Button
             disabled={lineWidth >= MAX_LINE_WIDTH}
             onClick={increaseLineWidth}
-            tooltip="increase"
+            tooltip="Increase"
             icon={<Plus width={28} />}
           ></Button>
         </div>

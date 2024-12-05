@@ -18,3 +18,8 @@ type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
+
+type CanvasOffset = {
+  x: number;
+  y: number;
+};

@@ -1,16 +1,26 @@
 import { ToastContainer } from 'react-toastify';
 import { DrawingDesk } from './components';
-import { ToolsPanel } from './components/panels';
+import { ToolsPanel, ZoomPanel, ActionsPanel } from './components/panels';
 
 import { DrawingProvider } from './contexts/drawingContext';
+import { ZoomProvider } from './contexts/zoomContext';
+import { Tooltip } from 'react-tooltip';
 
 function App() {
   return (
-    <DrawingProvider>
-      <DrawingDesk />
-      <ToolsPanel />
-      <ToastContainer position="bottom-right" />
-    </DrawingProvider>
+    <ZoomProvider>
+      <DrawingProvider>
+        <DrawingDesk />
+        <div className="w-full h-full">
+          <ToolsPanel />
+          <ZoomPanel />
+          <ActionsPanel />
+        </div>
+
+        <ToastContainer position="bottom-right" />
+        <Tooltip id="btn-tooltip" className="z-[9999] !text-[12px]" />
+      </DrawingProvider>
+    </ZoomProvider>
   );
 }
 

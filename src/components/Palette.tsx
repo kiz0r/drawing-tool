@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react';
 import { Check, Plus } from 'lucide-react';
-import useDrawingContext from '../hooks/useDrawingContext';
+import { useDrawingContext } from '../hooks';
 import { toast } from 'react-toastify';
 import Button from './Button';
+import clsx from 'clsx';
 
 interface IPalette {
   onColorChange: (color: string) => void;
@@ -33,30 +34,41 @@ const Palette = ({ onColorChange }: IPalette) => {
     setIsPickerShown(false);
   };
 
+  const paletteColorBtnCn = clsx(
+    'w-6 h-6 hover:scale-125 transition-transform duration-200',
+    {
+      'pointer-events-none grayscale': isPickerShown,
+    }
+  );
+
   return (
     <>
       <div className="inner-widget !grid grid-cols-7 !gap-0.5">
         {paletteColors.map((color, idx) => (
           <button
             key={idx}
-            className={`w-6 h-6 hover:scale-125 transition-transform duration-200`}
+            className={paletteColorBtnCn}
             style={{ backgroundColor: color }}
             onClick={() => onColorChange(color)}
           ></button>
         ))}
         <Button
+          tooltip="Pick a color"
           className="!p-0 hover:scale-125 rounded-none bg-transparent"
           onClick={handlePaletteChange}
           icon={isPickerShown ? <Check /> : <Plus />}
         />
+        {isPickerShown && (
+          <div className="w-6 h-6">
+            <input
+              ref={colorInputRef}
+              type="color"
+              defaultValue={paletteColors[0]}
+              className="p-0 w-full border-none cursor-pointer"
+            />
+          </div>
+        )}
       </div>
-      {isPickerShown && (
-        <input
-          type="color"
-          ref={colorInputRef}
-          className="absolute w-20 right-0 bottom-0"
-        />
-      )}
     </>
   );
 };

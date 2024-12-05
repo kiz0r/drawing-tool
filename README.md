@@ -10,7 +10,7 @@
 
 - fix canvas bg color setting up
 - implement download option
-- huge palette (more start colors + custom colors) # GLOBAL
+- [DONE] huge palette (more start colors + custom colors)
 - custom cursors
 - clear all drawing
 - implement figures (rectangle | circle | triangle | line | `arrow maybe`)

@@ -1,105 +1,91 @@
 import { useState, useRef, useEffect } from 'react';
-import useDrawingContext from '../hooks/useDrawingContext';
+import { useDrawingContext, useZoomContext } from '../hooks';
+import { INITIAL_CANVAS_OFFSET } from '../constants';
 
 const DrawingDesk = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
-  const [drawingData, setDrawingData] = useState<ImageData | null>(null);
+  const [offset, setOffset] = useState<CanvasOffset>(INITIAL_CANVAS_OFFSET);
 
-  const { tool, color, lineWidth, canvasBackground } = useDrawingContext();
+  const { zoom, zoomIn, zoomOut, resetZoom } = useZoomContext();
+  const { tool, color, lineWidth, canvasBackground, addDrawingState } =
+    useDrawingContext();
 
+  // Настройка канваса
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctxRef.current = ctx;
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const ctx = canvas.getContext('2d');
-    ctxRef.current = ctx;
+    // Устанавливаем начальный фон
+    ctx.fillStyle = canvasBackground;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }, [canvasBackground]);
 
+  // Обновление инструментов (цвет, толщина линии, инструмент)
+  useEffect(() => {
+    const ctx = ctxRef.current;
     if (!ctx) return;
 
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.lineWidth = lineWidth;
-    ctx.strokeStyle = color;
-
-    // Устанавливаем цвет фона
-    ctx.fillStyle = canvasBackground;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Восстанавливаем данные рисования
-    if (drawingData) {
-      ctx.putImageData(drawingData, 0, 0);
-    }
-  }, [color, lineWidth, canvasBackground, drawingData]);
+    ctx.strokeStyle = tool === 'eraser' ? canvasBackground : color;
+  }, [color, lineWidth, tool, canvasBackground]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const ctx = ctxRef.current;
+    if (!canvas || !ctx) return;
 
-    console.log('ctx.fillStyle :>> ', ctx.fillStyle);
+    // Обновляем фон
+    ctx.fillStyle = canvasBackground;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // ctx.putImageData(currentImage, 0, 0);
   }, [canvasBackground]);
 
-  // useEffect(() => {
-  //   const canvas = canvasRef.current;
-  //   if (!canvas) return;
+  // Масштабирование с клавиатуры
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.metaKey && event.key === '=') {
+        event.preventDefault();
+        zoomIn();
+      } else if (event.metaKey && event.key === '-') {
+        event.preventDefault();
+        zoomOut();
+      } else if (event.metaKey && event.key === '0') {
+        event.preventDefault();
+        resetZoom();
+      }
+    };
 
-  //   canvas.width = window.innerWidth;
-  //   canvas.height = window.innerHeight;
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [zoomIn, zoomOut, resetZoom]);
 
-  //   const ctx = canvas.getContext('2d');
-  //   ctxRef.current = ctx;
-
-  //   if (!ctx) return;
-
-  //   ctx.lineCap = 'round';
-  //   ctx.lineJoin = 'round';
-  //   ctx.lineWidth = lineWidth;
-  //   ctx.strokeStyle = color;
-
-  //   if (drawingData) {
-  //     ctx.putImageData(drawingData, 0, 0);
-  //   }
-  // }, [color, lineWidth, drawingData]);
-
-  // useEffect(() => {
-  //   const canvas = canvasRef.current;
-  //   const ctx = ctxRef.current;
-  //   if (!canvas || !ctx) return;
-
-  //   // Задаем фон
-  //   ctx.fillStyle = canvasBackground; // Цвет фона (например, белый)
-  //   ctx.fillRect(0, 0, canvas.width, canvas.height); // Заполняем весь канвас цветом
-
-  //   if (drawingData) {
-  //     ctx.putImageData(drawingData, 0, 0);
-  //   }
-  // }, [canvasBackground, drawingData]);
-
-  // useEffect(() => {
-  //   const ctx = ctxRef.current;
-
-  //   if (ctx && drawingData) {
-  //     ctx.putImageData(drawingData, 0, 0);
-  //   }
-  // }, [drawingData]);
-
+  // Получение координат мыши с учетом масштаба
   const getCanvasCoordinates = (e: React.MouseEvent) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
 
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = (e.clientX - rect.left) / zoom;
+    const y = (e.clientY - rect.top) / zoom;
 
     return { x, y };
   };
 
+  // Начало рисования
   const startDrawing = (e: React.MouseEvent) => {
     const { x, y } = getCanvasCoordinates(e);
     const ctx = ctxRef.current;
@@ -110,6 +96,7 @@ const DrawingDesk = () => {
     }
   };
 
+  // Рисование
   const draw = (e: React.MouseEvent) => {
     if (!isDrawing) return;
 
@@ -118,36 +105,34 @@ const DrawingDesk = () => {
 
     if (ctx) {
       if (tool === 'eraser') {
-        ctx.strokeStyle = canvasBackground; // Ластик рисует белым цветом
-        ctx.lineWidth = lineWidth; // Толщина линии по умолчанию
+        ctx.strokeStyle = canvasBackground;
       } else {
-        ctx.strokeStyle = color; // Цвет, выбранный в контексте
-        ctx.lineWidth = lineWidth; // Толщина линии по умолчанию
+        ctx.strokeStyle = color;
       }
       ctx.lineTo(x, y);
       ctx.stroke();
     }
   };
 
+  // Завершение рисования
   const stopDrawing = () => {
-    const ctx = ctxRef.current;
-    if (ctx) {
-      ctx.closePath();
-    }
-    setIsDrawing(false);
-
     const canvas = canvasRef.current;
-    if (canvas && ctx) {
+    const ctx = ctxRef.current;
+
+    if (isDrawing && canvas && ctx) {
+      ctx.closePath();
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      setDrawingData(imageData); // Сохраняем картинку
+      addDrawingState(imageData); // Сохраняем текущее состояние
+      setIsDrawing(false);
     }
   };
 
   return (
-    <div className="w-screen h-screen fixed top-0 left-0 z-1000">
+    <div className="fixed top-0 left-0 w-full h-full !pointer-events-auto">
       <canvas
+        id="canvas"
+        className="absolute left-0 bottom-0 w-full h-full"
         ref={canvasRef}
-        className="cursor-auto w-full h-full"
         onMouseDown={startDrawing}
         onMouseMove={draw}
         onMouseUp={stopDrawing}
