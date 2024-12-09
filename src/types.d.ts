@@ -23,3 +23,5 @@ type CanvasOffset = {
   x: number;
   y: number;
 };
+
+type Figure = 'rectangle' | 'circle' | 'line';

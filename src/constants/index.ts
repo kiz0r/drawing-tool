@@ -27,6 +27,8 @@ export const MIN_ZOOM = 0.5;
 export const MAX_ZOOM = 2;
 export const INITIAL_CANVAS_OFFSET: CanvasOffset = { x: 0, y: 0 };
 
+export const APP_ICON_SIZE = 20;
+
 export const APPLICATION_COLORS = {
   activeComponent: '#c0c0c1',
   secondaryComponent: '#f3f4f6',

@@ -1,5 +1,5 @@
 import { Minus, Plus } from 'lucide-react';
-import { MAX_LINE_WIDTH, MIN_LINE_WIDTH } from '../../constants';
+import { APP_ICON_SIZE, MAX_LINE_WIDTH, MIN_LINE_WIDTH } from '../../constants';
 import useDrawingContext from '../../hooks/useDrawingContext';
 import Button from '../Button';
 import Modal from '../Modal';
@@ -20,14 +20,14 @@ const ColorModal = (props: ModalProps) => {
             disabled={lineWidth <= MIN_LINE_WIDTH}
             onClick={decreaseLineWidth}
             tooltip="Decrease"
-            icon={<Minus width={28} />}
+            icon={<Minus width={APP_ICON_SIZE} />}
           ></Button>
           <span className="font-semibold text-[20px]">{lineWidth}</span>
           <Button
             disabled={lineWidth >= MAX_LINE_WIDTH}
             onClick={increaseLineWidth}
             tooltip="Increase"
-            icon={<Plus width={28} />}
+            icon={<Plus width={APP_ICON_SIZE} />}
           ></Button>
         </div>
       </div>

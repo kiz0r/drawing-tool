@@ -1,16 +1,36 @@
 import { useState, useRef, useEffect } from 'react';
 import { useDrawingContext, useZoomContext } from '../hooks';
-import { INITIAL_CANVAS_OFFSET } from '../constants';
+
+function getCursor(tool: Tool) {
+  switch (tool) {
+    case 'pencil':
+      break;
+    case 'eraser':
+      return 'cro';
+
+    default:
+      return 'default';
+  }
+}
 
 const DrawingDesk = () => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
-  const [offset, setOffset] = useState<CanvasOffset>(INITIAL_CANVAS_OFFSET);
+
+  const [startX, setStartX] = useState<number>(0);
+  const [startY, setStartY] = useState<number>(0);
 
   const { zoom, zoomIn, zoomOut, resetZoom } = useZoomContext();
-  const { tool, color, lineWidth, canvasBackground, addDrawingState } =
-    useDrawingContext();
+  const {
+    figure,
+    tool,
+    color,
+    lineWidth,
+    canvasBackground,
+    addDrawingState,
+    canvasRef,
+    drawFigure,
+  } = useDrawingContext();
 
   // Настройка канваса
   useEffect(() => {
@@ -27,7 +47,7 @@ const DrawingDesk = () => {
     // Устанавливаем начальный фон
     ctx.fillStyle = canvasBackground;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }, [canvasBackground]);
+  }, [canvasBackground, canvasRef]);
 
   // Обновление инструментов (цвет, толщина линии, инструмент)
   useEffect(() => {
@@ -48,9 +68,7 @@ const DrawingDesk = () => {
     // Обновляем фон
     ctx.fillStyle = canvasBackground;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // ctx.putImageData(currentImage, 0, 0);
-  }, [canvasBackground]);
+  }, [canvasBackground, canvasRef]);
 
   // Масштабирование с клавиатуры
   useEffect(() => {
@@ -86,53 +104,56 @@ const DrawingDesk = () => {
   };
 
   // Начало рисования
-  const startDrawing = (e: React.MouseEvent) => {
-    const { x, y } = getCanvasCoordinates(e);
+  const startDrawing = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const ctx = ctxRef.current;
     if (ctx) {
+      const { offsetX, offsetY } = event.nativeEvent;
+      setStartX(offsetX / zoom);
+      setStartY(offsetY / zoom);
       ctx.beginPath();
-      ctx.moveTo(x, y);
+      ctx.moveTo(offsetX / zoom, offsetY / zoom);
       setIsDrawing(true);
     }
   };
-
   // Рисование
-  const draw = (e: React.MouseEvent) => {
-    if (!isDrawing) return;
-
-    const { x, y } = getCanvasCoordinates(e);
+  const draw = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const ctx = ctxRef.current;
-
-    if (ctx) {
-      if (tool === 'eraser') {
-        ctx.strokeStyle = canvasBackground;
-      } else {
-        ctx.strokeStyle = color;
-      }
-      ctx.lineTo(x, y);
+    if (isDrawing && ctx && tool !== 'figure') {
+      ctx.lineTo(
+        event.nativeEvent.offsetX / zoom,
+        event.nativeEvent.offsetY / zoom
+      );
       ctx.stroke();
     }
   };
 
   // Завершение рисования
-  const stopDrawing = () => {
-    const canvas = canvasRef.current;
+  const stopDrawing = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const ctx = ctxRef.current;
-
-    if (isDrawing && canvas && ctx) {
+    if (ctx) {
       ctx.closePath();
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      addDrawingState(imageData); // Сохраняем текущее состояние
-      setIsDrawing(false);
+    }
+    setIsDrawing(false);
+
+    const canvas = canvasRef.current;
+    if (canvas && ctx) {
+      const { offsetX, offsetY } = event.nativeEvent;
+      if (tool === 'pencil') {
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        addDrawingState(imageData);
+      } else if (tool === 'figure') {
+        drawFigure(figure, startX, startY, offsetX / zoom, offsetY / zoom);
+      }
     }
   };
 
   return (
     <div className="fixed top-0 left-0 w-full h-full !pointer-events-auto">
       <canvas
+        style={{ cursor: getCursor(tool) }}
         id="canvas"
         className="absolute left-0 bottom-0 w-full h-full"
-        ref={canvasRef}
+        ref={canvasRef as React.RefObject<HTMLCanvasElement>}
         onMouseDown={startDrawing}
         onMouseMove={draw}
         onMouseUp={stopDrawing}

@@ -1,7 +1,7 @@
-import { Minus, Plus } from 'lucide-react';
+import { Minus, Plus, RotateCcw } from 'lucide-react';
 import Button from '../Button';
-import useZoomContext from '../../hooks/useZoomContext';
-import { MAX_ZOOM, MIN_ZOOM } from '../../constants';
+import { useZoomContext } from '../../hooks';
+import { APP_ICON_SIZE, MAX_ZOOM, MIN_ZOOM } from '../../constants';
 
 const ZoomPanel = () => {
   const { zoom, zoomIn, zoomOut, resetZoom } = useZoomContext();
@@ -18,7 +18,7 @@ const ZoomPanel = () => {
             onClick={zoomOut}
             disabled={zoom === MIN_ZOOM}
           >
-            <Minus />
+            <Minus size={APP_ICON_SIZE} />
           </Button>
           <span>{zoomInPercent}%</span>
 
@@ -27,7 +27,11 @@ const ZoomPanel = () => {
             onClick={zoomIn}
             disabled={zoom === MAX_ZOOM}
           >
-            <Plus />
+            <Plus size={APP_ICON_SIZE} />
+          </Button>
+
+          <Button tooltip="Reset Zoom" onClick={resetZoom}>
+            <RotateCcw size={APP_ICON_SIZE} />
           </Button>
         </div>
       </div>

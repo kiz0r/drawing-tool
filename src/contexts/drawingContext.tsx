@@ -1,12 +1,11 @@
-import { createContext, ReactNode, useState } from 'react';
+import { createContext, ReactNode, useEffect, useRef, useState } from 'react';
 import {
   AVAILABLE_COLORS,
   DEFAULT_CANVAS_BACKGROUND_COLOR,
 } from '../constants';
 
-type Figure = 'rectangle' | 'circle' | 'line';
-
 interface IDrawingContext {
+  canvasRef: React.RefObject<HTMLCanvasElement | null>;
   color: string;
   tool: Tool;
   lineWidth: number;
@@ -24,6 +23,13 @@ interface IDrawingContext {
   addDrawingState: (imageData: ImageData) => void;
   undo: () => void;
   redo: () => void;
+  drawFigure: (
+    figure: Figure,
+    startX: number,
+    startY: number,
+    endX: number,
+    endY: number
+  ) => void;
 }
 
 interface IDrawingProvider {
@@ -35,8 +41,9 @@ export const DrawingContext = createContext<IDrawingContext | undefined>(
 );
 
 export const DrawingProvider = ({ children }: IDrawingProvider) => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [tool, setTool] = useState<Tool>('pencil');
-  const [figure, setFigure] = useState<Figure>('rectangle');
+  const [figure, setFigure] = useState<Figure | null>(null);
   const [color, setColor] = useState(AVAILABLE_COLORS[0]);
   const [paletteColors, setPaletteColors] =
     useState<string[]>(AVAILABLE_COLORS);
@@ -50,6 +57,44 @@ export const DrawingProvider = ({ children }: IDrawingProvider) => {
   const addDrawingState = (imageData: ImageData) => {
     setDrawingHistory([...drawingHistory, imageData]);
     setRedoStack([]);
+  };
+
+  const drawFigure = (
+    figure: Figure,
+    startX: number,
+    startY: number,
+    endX: number,
+    endY: number
+  ) => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+
+    if (!ctx || !canvas) return;
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lineWidth;
+
+    const radius = Math.sqrt((endX - startX) ** 2 + (endY - startY) ** 2);
+
+    switch (figure) {
+      case 'rectangle':
+        ctx.strokeRect(startX, startY, endX - startX, endY - startY);
+        break;
+      case 'circle':
+        ctx.beginPath();
+        ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
+        ctx.stroke();
+        break;
+      case 'line':
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+        break;
+    }
+
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    addDrawingState(imageData);
   };
 
   const undo = () => {
@@ -76,7 +121,14 @@ export const DrawingProvider = ({ children }: IDrawingProvider) => {
     }
   };
 
+  // TODO: Delete testing useEffects
+  useEffect(() => {
+    console.log('tool :>> ', tool);
+    console.log('figure :>> ', figure);
+  }, [tool, figure]);
+
   const value = {
+    canvasRef,
     tool,
     color,
     lineWidth,
@@ -92,6 +144,7 @@ export const DrawingProvider = ({ children }: IDrawingProvider) => {
     setFigure,
     setPaletteColors,
     addDrawingState,
+    drawFigure,
     undo,
     redo,
   };

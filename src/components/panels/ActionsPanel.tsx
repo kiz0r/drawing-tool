@@ -1,4 +1,5 @@
-import useDrawingContext from '../../hooks/useDrawingContext';
+import { APP_ICON_SIZE } from '../../constants';
+import { useDrawingContext } from '../../hooks';
 import { downloadCanvas } from '../../utils';
 import Button from '../Button';
 import { Undo, Redo, Download } from 'lucide-react';
@@ -9,16 +10,16 @@ const ActionsPanel = () => {
   return (
     <div className="widget absolute left-4 bottom-4 !flex-row gap-4">
       <Button tooltip="Undo Action" onClick={undo}>
-        <Undo />
+        <Undo size={APP_ICON_SIZE} />
       </Button>
       <Button tooltip="Redo Action" onClick={redo}>
-        <Redo />
+        <Redo size={APP_ICON_SIZE} />
       </Button>
       <Button
         tooltip="Download Drawing"
         onClick={() => downloadCanvas('drawing.png')}
       >
-        <Download />
+        <Download size={APP_ICON_SIZE} />
       </Button>
     </div>
   );
