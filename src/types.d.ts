@@ -1,11 +1,4 @@
-type Tool =
-  | 'pencil'
-  | 'eraser'
-  | 'clear-all'
-  | 'hand'
-  | 'color'
-  | 'figure'
-  | 'canvas-background';
+type Tool = 'pencil' | 'eraser' | 'color' | 'figure' | 'canvas-background';
 
 type DrawingTool = {
   tooltip: string;

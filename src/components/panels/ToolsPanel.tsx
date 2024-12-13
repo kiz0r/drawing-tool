@@ -1,45 +1,22 @@
-import {
-  Circle,
-  Eraser,
-  PaintBucket,
-  Pencil,
-  RectangleHorizontal,
-  Slash,
-  X,
-} from 'lucide-react';
+import { Eraser, PaintBucket, Pencil, X } from 'lucide-react';
 import Button from '../Button';
 import { useDrawingContext } from '../../hooks';
-import { APP_ICON_SIZE, MAX_LINE_WIDTH, MIN_LINE_WIDTH } from '../../constants';
+import { APP_ICON_SIZE } from '../../constants';
 import { useState } from 'react';
-import { ColorModal, CanvasBgModal, FigureModal } from '../modals';
+import { ColorModal, CanvasBgModal } from '../modals';
+import { getBorderWidth } from '../../utils';
 
 type ToolsPanelModals = 'color' | 'figure' | 'canvas-background';
 
-const getFigureIcon = (figure: Figure) => {
-  switch (figure) {
-    case 'rectangle':
-      return <RectangleHorizontal size={APP_ICON_SIZE} />;
-    case 'circle':
-      return <Circle size={APP_ICON_SIZE} />;
-    case 'line':
-      return <Slash size={APP_ICON_SIZE} />;
-    default:
-      return <RectangleHorizontal size={APP_ICON_SIZE} />;
-  }
-};
-
 const ToolsPanel = () => {
-  const { setTool, color, tool, lineWidth, canvasBackground, figure } =
+  const { setTool, color, tool, lineWidth, canvasBackground, clearCanvas } =
     useDrawingContext();
 
   const [currentModal, setCurrentModal] = useState<ToolsPanelModals | null>(
     null
   );
 
-  const borderWidth =
-    lineWidth > MIN_LINE_WIDTH && lineWidth < MAX_LINE_WIDTH / 2
-      ? lineWidth / 2
-      : lineWidth / 4;
+  const borderWidth = getBorderWidth(lineWidth);
 
   const handleModal = (modal: ToolsPanelModals) => {
     if (currentModal === modal) {
@@ -81,17 +58,17 @@ const ToolsPanel = () => {
       ),
       action: () => handleModal('canvas-background'),
     },
-    {
-      forTool: 'figure',
-      tooltip: 'Figure',
-      element: getFigureIcon(figure),
-      action: () => handleModal('figure'),
-    },
+    // {
+    //   forTool: 'figure',
+    //   tooltip: 'Figure',
+    //   element: getFigureIcon(figure),
+    //   action: () => handleModal('figure'),
+    // },
 
     {
       tooltip: 'Clear all',
       element: <X size={APP_ICON_SIZE} />,
-      action: () => setTool('clear-all'),
+      action: () => clearCanvas(),
     },
   ];
 
@@ -105,22 +82,17 @@ const ToolsPanel = () => {
             (
               { tooltip, element, action, forTool }: DrawingTool,
               idx: number
-            ) => {
-              console.log('forTool :>> ', forTool);
-              console.log('tool :>> ', tool);
-
-              return (
-                <Button
-                  key={`${tooltip}-${idx}`}
-                  onClick={action}
-                  tooltip={tooltip}
-                  type="button"
-                  isActive={forTool === tool}
-                >
-                  {element}
-                </Button>
-              );
-            }
+            ) => (
+              <Button
+                key={`${tooltip}-${idx}`}
+                onClick={action}
+                tooltip={tooltip}
+                type="button"
+                isActive={forTool === tool}
+              >
+                {element}
+              </Button>
+            )
           )}
         </div>
 
@@ -129,7 +101,6 @@ const ToolsPanel = () => {
           isOpen={currentModal === 'canvas-background'}
         />
         <ColorModal isOpen={currentModal === 'color'} onClose={closeModal} />
-        <FigureModal isOpen={currentModal === 'figure'} onClose={closeModal} />
       </div>
     </div>
   );

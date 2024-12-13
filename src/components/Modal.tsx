@@ -57,7 +57,7 @@ const Modal = ({ isOpen, onClose, children, modalName }: IModal) => {
   }
 
   return (
-    <div ref={modalRef} data-modal={modalName} className="widget">
+    <div data-modal={modalName} className="widget">
       {children}
     </div>
   );
