@@ -1,4 +1,4 @@
-![Cover](/public/assets/docs/preview.png)
+![Cover](/public/assets/docs/cover.png)
 
 # Drawing tool made with React.js and Typescript
 
