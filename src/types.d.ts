@@ -1,4 +1,4 @@
-type Tool = 'pencil' | 'eraser' | 'color' | 'figure' | 'canvas-background';
+type Tool = 'pencil' | 'eraser' | 'color' | 'canvas-background';
 
 type DrawingTool = {
   tooltip: string;
@@ -11,10 +11,3 @@ type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
-
-type CanvasOffset = {
-  x: number;
-  y: number;
-};
-
-type Figure = 'rectangle' | 'circle' | 'line';

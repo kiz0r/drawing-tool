@@ -19,24 +19,23 @@ export const AVAILABLE_COLORS = [
 
 export const DEFAULT_CANVAS_BACKGROUND_COLOR = '#ffffff';
 
-export const LINE_WIDTH_PROPERTIES = {
-  DEFAULT: 5,
-  MIN: 3,
-  MAX: 30,
-};
+export enum LINE_WIDTH_PROPERTIES {
+  DEFAULT = 5,
+  MIN = 3,
+  MAX = 30,
+}
 export const DEFAULT_ZOOM = 1;
 export const MIN_ZOOM = 0.5;
 export const MAX_ZOOM = 2;
-export const INITIAL_CANVAS_OFFSET: CanvasOffset = { x: 0, y: 0 };
 
 export const APP_ICON_SIZE = 20;
 
 export const MAX_HISTORY_LENGTH = 10;
 
-export const APPLICATION_COLORS = {
-  activeComponent: '#c0c0c1',
-  secondaryComponent: '#f1f5f9', // #f3f4f6
-  primaryComponent: '#e6eaf0',
-  tertiaryComponent: '#e5e7eb',
-  hoverTertiary: '#dbdde1',
-};
+export enum APPLICATION_COLORS {
+  activeComponent = '#c0c0c1',
+  secondaryComponent = '#f1f5f9',
+  primaryComponent = '#e6eaf0',
+  tertiaryComponent = '#e5e7eb',
+  hoverTertiary = '#dbdde1',
+}
