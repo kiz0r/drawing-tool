@@ -10,9 +10,10 @@ interface IPalette {
 }
 
 const Palette = ({ onColorChange }: IPalette) => {
-  const { paletteColors, setPaletteColors } = useDrawingContext();
+  const { drawingState, setPaletteColors } = useDrawingContext();
   const [isPickerShown, setIsPickerShown] = useState<boolean>(false);
   const colorInputRef = useRef<HTMLInputElement>(null);
+  const { paletteColors } = drawingState;
 
   const addCustomColor = (color: string) => {
     if (paletteColors.includes(color)) {
@@ -64,7 +65,7 @@ const Palette = ({ onColorChange }: IPalette) => {
               ref={colorInputRef}
               type="color"
               defaultValue={paletteColors[0]}
-              className="p-0 w-full border-none cursor-pointer"
+              className="w-full p-0 border-none cursor-pointer"
             />
           </div>
         )}

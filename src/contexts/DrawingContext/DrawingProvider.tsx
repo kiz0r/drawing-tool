@@ -1,65 +1,46 @@
-import { ReactNode, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   AVAILABLE_COLORS,
   DEFAULT_CANVAS_BACKGROUND_COLOR,
   LINE_WIDTH_PROPERTIES,
-  MAX_HISTORY_LENGTH,
 } from '../../constants';
 import DrawingContext from './DrawingContext';
+import type { DrawingState, IDrawingProvider } from './types';
 
-interface IDrawingProvider {
-  children: ReactNode;
-}
+const INITAIAL_DRAWING_STATE: DrawingState = {
+  isDrawing: false,
+  paletteColors: AVAILABLE_COLORS,
+  tool: 'pencil',
+  color: AVAILABLE_COLORS[0],
+  lineWidth: LINE_WIDTH_PROPERTIES.DEFAULT,
+  canvasBackground: DEFAULT_CANVAS_BACKGROUND_COLOR,
+};
+
 export const DrawingProvider = ({ children }: IDrawingProvider) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [tool, setTool] = useState<Tool>('pencil');
-  const [color, setColor] = useState(AVAILABLE_COLORS[0]);
-  const [paletteColors, setPaletteColors] =
-    useState<string[]>(AVAILABLE_COLORS);
-  const [lineWidth, setLineWidth] = useState<number>(
-    LINE_WIDTH_PROPERTIES.DEFAULT
+  const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const [drawingState, setDrawingState] = useState<DrawingState>(
+    INITAIAL_DRAWING_STATE
   );
-  const [canvasBackground, setCanvasBackground] = useState<string>(
-    DEFAULT_CANVAS_BACKGROUND_COLOR
-  );
-  const [drawingHistory, setDrawingHistory] = useState<ImageData[]>([]);
-  const [redoStack, setRedoStack] = useState<ImageData[]>([]);
 
-  const addDrawingState = (imageData: ImageData) => {
-    const newHistory = [...drawingHistory, imageData];
-    if (newHistory.length > MAX_HISTORY_LENGTH) newHistory.shift();
-    setDrawingHistory(newHistory);
-    setRedoStack([]);
+  const setTool = (tool: Tool) => {
+    setDrawingState((prev) => ({ ...prev, tool }));
+  };
+  const setColor = (color: string) =>
+    setDrawingState((prev) => ({ ...prev, color }));
+
+  const setLineWidth = (lineWidth: number) =>
+    setDrawingState((prev) => ({ ...prev, lineWidth }));
+
+  const setCanvasBackground = (canvasBackground: string) =>
+    setDrawingState((prev) => ({ ...prev, canvasBackground }));
+
+  const setIsDrawing = (isDrawing: boolean) => {
+    setDrawingState((prev) => ({ ...prev, isDrawing }));
   };
 
-  const undo = () => {
-    if (drawingHistory.length > 0) {
-      const newHistory = [...drawingHistory];
-      const lastState = newHistory.pop();
-      if (lastState) {
-        setRedoStack([lastState, ...redoStack]);
-      }
-      setDrawingHistory(newHistory);
-
-      if (canvasRef.current && lastState) {
-        const ctx = canvasRef.current.getContext('2d');
-        if (ctx)
-          ctx.putImageData(newHistory[newHistory.length - 1] || null, 0, 0);
-      }
-    }
-  };
-
-  const redo = () => {
-    if (redoStack.length > 0) {
-      const nextState = redoStack[0];
-      setRedoStack(redoStack.slice(1));
-      setDrawingHistory([...drawingHistory, nextState]);
-
-      if (canvasRef.current && nextState) {
-        const ctx = canvasRef.current.getContext('2d');
-        if (ctx) ctx.putImageData(nextState, 0, 0);
-      }
-    }
+  const setPaletteColors = (paletteColors: string[]) => {
+    setDrawingState((prev) => ({ ...prev, paletteColors }));
   };
 
   const clearCanvas = () => {
@@ -68,7 +49,7 @@ export const DrawingProvider = ({ children }: IDrawingProvider) => {
       const ctx = canvas.getContext('2d');
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = canvasBackground;
+        ctx.fillStyle = drawingState.canvasBackground;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
     }
@@ -76,22 +57,15 @@ export const DrawingProvider = ({ children }: IDrawingProvider) => {
 
   const value = {
     canvasRef,
-    tool,
-    color,
-    lineWidth,
-    canvasBackground,
-    paletteColors,
-    drawingHistory,
-    redoStack,
+    ctxRef,
+    drawingState,
+    clearCanvas,
     setTool,
     setColor,
     setLineWidth,
     setCanvasBackground,
+    setIsDrawing,
     setPaletteColors,
-    addDrawingState,
-    undo,
-    redo,
-    clearCanvas,
   };
 
   return (

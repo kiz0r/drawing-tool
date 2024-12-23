@@ -1,21 +1,12 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useDrawingContext, useZoomContext } from '../hooks';
 
 const DrawingDesk = () => {
-  const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [currentImageData, setCurrentImageData] = useState<ImageData | null>(
-    null
-  );
+  const [imageData, setImageData] = useState<ImageData | null>(null);
 
-  const {
-    tool,
-    color,
-    lineWidth,
-    canvasBackground,
-    canvasRef,
-    addDrawingState,
-  } = useDrawingContext();
+  const { ctxRef, canvasRef, drawingState, setIsDrawing } = useDrawingContext();
+
+  const { tool, lineWidth, canvasBackground, color, isDrawing } = drawingState;
 
   const { zoom } = useZoomContext();
 
@@ -23,19 +14,17 @@ const DrawingDesk = () => {
     const ctx = ctxRef.current;
     if (!ctx) return;
 
-    // Перерисовываем фон
     const canvas = canvasRef.current;
     if (canvas) {
       ctx.fillStyle = canvasBackground;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    // Устанавливаем свойства рисования
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.lineWidth = lineWidth;
     ctx.strokeStyle = tool === 'eraser' ? canvasBackground : color;
-  }, [color, lineWidth, tool, canvasBackground, canvasRef]);
+  }, [ctxRef, canvasRef, lineWidth, tool, canvasBackground, color]);
 
   const resizeCanvas = useCallback(() => {
     const canvas = canvasRef.current;
@@ -47,14 +36,12 @@ const DrawingDesk = () => {
     canvas.width = width;
     canvas.height = height;
 
-    // После изменения размера канваса перерисовываем фон
     resetCanvasProperties();
 
-    // Восстанавливаем текущий рисунок, если он есть
-    if (currentImageData) {
-      ctx.putImageData(currentImageData, 0, 0);
+    if (imageData) {
+      ctx.putImageData(imageData, 0, 0);
     }
-  }, [canvasRef, resetCanvasProperties, currentImageData]);
+  }, [canvasRef, ctxRef, resetCanvasProperties, imageData]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -72,7 +59,7 @@ const DrawingDesk = () => {
     return () => {
       window.removeEventListener('resize', resizeCanvas);
     };
-  }, [canvasRef, resizeCanvas]);
+  }, [canvasRef, ctxRef, resizeCanvas]);
 
   useEffect(() => {
     resetCanvasProperties();
@@ -125,8 +112,7 @@ const DrawingDesk = () => {
         canvasRef.current.width,
         canvasRef.current.height
       );
-      setCurrentImageData(currentImageData); // Сохраняем текущее состояние рисунка
-      addDrawingState(currentImageData);
+      setImageData(currentImageData);
     }
   };
 

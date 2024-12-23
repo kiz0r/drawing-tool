@@ -9,8 +9,9 @@ import { getBorderWidth } from '../../utils';
 type ToolsPanelModals = 'color' | 'figure' | 'canvas-background';
 
 const ToolsPanel = () => {
-  const { setTool, color, tool, lineWidth, canvasBackground, clearCanvas } =
-    useDrawingContext();
+  const { setTool, drawingState, clearCanvas } = useDrawingContext();
+
+  const { lineWidth, color, canvasBackground, tool } = drawingState;
 
   const [currentModal, setCurrentModal] = useState<ToolsPanelModals | null>(
     null
@@ -58,13 +59,6 @@ const ToolsPanel = () => {
       ),
       action: () => handleModal('canvas-background'),
     },
-    // {
-    //   forTool: 'figure',
-    //   tooltip: 'Figure',
-    //   element: getFigureIcon(figure),
-    //   action: () => handleModal('figure'),
-    // },
-
     {
       tooltip: 'Clear all',
       element: <X size={APP_ICON_SIZE} />,

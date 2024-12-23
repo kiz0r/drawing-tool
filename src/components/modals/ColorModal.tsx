@@ -7,7 +7,9 @@ import Palette from '../Palette';
 import { useState } from 'react';
 
 const ColorModal = (props: ModalProps) => {
-  const { setColor, setLineWidth, lineWidth } = useDrawingContext();
+  const { setColor, setLineWidth, drawingState } = useDrawingContext();
+  const { lineWidth } = drawingState;
+
   const [inputValue, setInputValue] = useState<string>(lineWidth.toString());
 
   const increaseLineWidth = () => {
@@ -43,7 +45,6 @@ const ColorModal = (props: ModalProps) => {
       parsedValue < LINE_WIDTH_PROPERTIES.MIN ||
       parsedValue > LINE_WIDTH_PROPERTIES.MAX
     ) {
-      // Reset to current `lineWidth` if invalid value is entered
       setInputValue(lineWidth.toString());
     }
   };
@@ -62,7 +63,7 @@ const ColorModal = (props: ModalProps) => {
             type="number"
             className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none bg-transparent w-16 text-center font-semibold text-[20px]"
             onChange={handleInputChange}
-            onBlur={handleInputBlur} // Проверка на допустимое значение при потере фокуса
+            onBlur={handleInputBlur}
             value={inputValue}
             min={LINE_WIDTH_PROPERTIES.MIN}
             max={LINE_WIDTH_PROPERTIES.MAX}
