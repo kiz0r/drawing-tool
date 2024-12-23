@@ -1,5 +1,5 @@
 import { type ReactNode, useCallback, useEffect, useState } from 'react';
-import { DEFAULT_ZOOM, MAX_ZOOM, MIN_ZOOM } from '../../constants';
+import { ZOOM_PROPERTIES } from '../../constants';
 import ZoomContext from './ZoomContext';
 
 interface IZoomProvider {
@@ -7,23 +7,25 @@ interface IZoomProvider {
 }
 
 const ZoomProvider = ({ children }: IZoomProvider) => {
-  const [zoom, setZoom] = useState<number>(DEFAULT_ZOOM);
+  const [zoom, setZoom] = useState<number>(ZOOM_PROPERTIES.DEFAULT);
 
   const zoomIn = () => {
     setZoom((prevZoom) => {
-      const newZoom = prevZoom < MAX_ZOOM ? prevZoom + 0.1 : prevZoom;
+      const newZoom =
+        prevZoom < ZOOM_PROPERTIES.MAX ? prevZoom + 0.1 : prevZoom;
       return parseFloat(newZoom.toFixed(1));
     });
   };
 
   const zoomOut = () => {
     setZoom((prevZoom) => {
-      const newZoom = prevZoom > MIN_ZOOM ? prevZoom - 0.1 : prevZoom;
+      const newZoom =
+        prevZoom > ZOOM_PROPERTIES.MIN ? prevZoom - 0.1 : prevZoom;
       return parseFloat(newZoom.toFixed(1));
     });
   };
 
-  const resetZoom = () => setZoom(DEFAULT_ZOOM);
+  const resetZoom = () => setZoom(ZOOM_PROPERTIES.DEFAULT);
 
   const handleWheel = useCallback((e: WheelEvent) => {
     if (e.ctrlKey || e.metaKey) {

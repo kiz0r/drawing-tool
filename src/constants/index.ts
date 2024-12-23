@@ -24,9 +24,12 @@ export enum LINE_WIDTH_PROPERTIES {
   MIN = 3,
   MAX = 30,
 }
-export const DEFAULT_ZOOM = 1;
-export const MIN_ZOOM = 0.5;
-export const MAX_ZOOM = 2;
+
+export enum ZOOM_PROPERTIES {
+  DEFAULT = 1,
+  MIN = 0.5,
+  MAX = 2,
+}
 
 export const APP_ICON_SIZE = 20;
 
