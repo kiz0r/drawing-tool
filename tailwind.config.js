@@ -27,7 +27,7 @@ export default {
           display: 'flex',
           'flex-direction': 'column',
           'max-width': '300px',
-          padding: '0.75rem',
+          padding: '6px',
           'border-radius': '0.375rem',
           'background-color': APPLICATION_COLORS.secondaryComponent,
           'text-align': 'center',

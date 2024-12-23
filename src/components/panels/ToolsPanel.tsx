@@ -44,7 +44,7 @@ const ToolsPanel = () => {
       tooltip: 'Color',
       element: (
         <span
-          className="rounded-full w-5 h-5 border-activeComponent"
+          className="w-5 h-5 rounded-full border-activeComponent"
           style={{ backgroundColor: color, borderWidth }}
         ></span>
       ),
@@ -76,8 +76,8 @@ const ToolsPanel = () => {
 
   return (
     <div className="absolute left-4 -translate-y-1/2 top-1/2 z-[1001]">
-      <div className="flex gap-3 items-center">
-        <div className="flex flex-col gap-2 w-fit p-1.5 items-stretch rounded-md bg-secondaryComponent">
+      <div className="flex items-center gap-3">
+        <div className="widget">
           {tools.map(
             (
               { tooltip, element, action, forTool }: DrawingTool,

@@ -35,7 +35,7 @@ export const MAX_HISTORY_LENGTH = 10;
 
 export const APPLICATION_COLORS = {
   activeComponent: '#c0c0c1',
-  secondaryComponent: '#f3f4f6',
+  secondaryComponent: '#f1f5f9', // #f3f4f6
   primaryComponent: '#e6eaf0',
   tertiaryComponent: '#e5e7eb',
   hoverTertiary: '#dbdde1',
