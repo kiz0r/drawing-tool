@@ -1,8 +1,8 @@
+import { useAtomValue } from 'jotai';
+import React from 'react';
 import { cn } from '@/lib/utils';
 import { HexColor } from '@/shared/types/HexColor';
 import { drawingStateAtom } from '@/store';
-import { useAtomValue } from 'jotai';
-import React from 'react';
 
 type Props = {
   readonly onColorChange: (color: HexColor) => void;
