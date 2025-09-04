@@ -1,24 +1,16 @@
-import { ToastContainer } from 'react-toastify';
-import { DrawingDesk } from './components';
-import { ToolsPanel, ActionsPanel, ZoomPanel } from './components/panels';
+import { Provider as StoreProvider } from 'jotai';
+import React from 'react';
+import { ActionsBar } from '@/components/ActionsBar';
+import { DrawingDesk } from '@/components/DrawingDesk';
+import { Toaster } from '@/components/ui/Sonner';
+import { store } from '@/store';
 
-import { DrawingProvider, ZoomProvider } from './contexts';
-import { Tooltip } from 'react-tooltip';
-
-function App() {
+export const App = React.memo(() => {
   return (
-    <ZoomProvider>
-      <DrawingProvider>
-        <DrawingDesk />
-        <ToolsPanel />
-        <ActionsPanel />
-        <ZoomPanel />
-
-        <ToastContainer position="bottom-right" />
-        <Tooltip id="btn-tooltip" className="z-[9999] !text-[12px]" />
-      </DrawingProvider>
-    </ZoomProvider>
+    <StoreProvider store={store}>
+      <DrawingDesk />
+      <ActionsBar />
+      <Toaster richColors position='top-right' />
+    </StoreProvider>
   );
-}
-
-export default App;
+});
