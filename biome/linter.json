@@ -1,0 +1,84 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.0.6/schema.json",
+  "linter": {
+    "rules": {
+      "a11y": {
+        "noLabelWithoutControl": "off",
+        "noSvgWithoutTitle": "off",
+        "useKeyWithClickEvents": "off",
+        "noStaticElementInteractions": "off"
+      },
+      "complexity": {
+        "noBannedTypes": "warn",
+        "noExtraBooleanCast": "warn",
+        "noForEach": "off",
+        "noStaticOnlyClass": "off",
+        "noThisInStatic": "warn",
+        "noUselessConstructor": "warn",
+        "noUselessLabel": "warn",
+        "noUselessTernary": "warn",
+        "noUselessThisAlias": "off",
+        "useDateNow": "warn",
+        "useFlatMap": "warn",
+        "useLiteralKeys": "warn",
+        "useOptionalChain": "warn",
+        "useSimpleNumberKeys": "warn",
+        "useSimplifiedLogicExpression": "warn"
+      },
+      "correctness": {
+        "noConstantMathMinMaxClamp": "warn",
+        "noConstAssign": "error",
+        "noSwitchDeclarations": "off",
+        "noUnusedImports": "off",
+        "noUnusedVariables": "warn",
+        "useValidForDirection": "error",
+        "useYield": "off"
+      },
+      "nursery": {
+        "useSortedClasses": "off"
+      },
+      "performance": {
+        "noAccumulatingSpread": "off",
+        "noDelete": "error"
+      },
+      "style": {
+        "noCommonJs": "warn",
+        "noInferrableTypes": "warn",
+        "noNegationElse": "off",
+        "noNonNullAssertion": "error",
+        "noParameterAssign": "warn",
+        "noUnusedTemplateLiteral": "warn",
+        "noUselessElse": "warn",
+        "noYodaExpression": "warn",
+        "useAsConstAssertion": "warn",
+        "useBlockStatements": "warn",
+        "useConsistentArrayType": {
+          "level": "warn",
+          "options": {
+            "syntax": "shorthand"
+          }
+        },
+        "useDefaultParameterLast": "warn",
+        "useEnumInitializers": "warn",
+        "useExportType": "warn",
+        "useForOf": "warn",
+        "useFragmentSyntax": "warn",
+        "useImportType": "off",
+        "useNodejsImportProtocol": "warn",
+        "useNumberNamespace": "warn",
+        "useSelfClosingElements": "warn",
+        "useSingleVarDeclarator": "warn"
+      },
+      "suspicious": {
+        "noArrayIndexKey": "off",
+        "noAssignInExpressions": "error",
+        "noConfusingVoidType": "warn",
+        "noExplicitAny": "error",
+        "noPrototypeBuiltins": "off",
+        "useAwait": "warn",
+        "useIsArray": "warn",
+        "useAdjacentOverloadSignatures": "info"
+      }
+    }
+  }
+}
