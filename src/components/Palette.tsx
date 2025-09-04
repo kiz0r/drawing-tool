@@ -1,77 +1,32 @@
-import { useRef, useState } from 'react';
-import { Check, Plus } from 'lucide-react';
-import { useDrawingContext } from '../hooks';
-import { toast } from 'react-toastify';
-import Button from './Button';
-import clsx from 'clsx';
+import { useAtomValue } from 'jotai';
+import React from 'react';
+import { cn } from '@/lib/utils';
+import { HexColor } from '@/shared/types/HexColor';
+import { drawingStateAtom } from '@/store';
 
-interface IPalette {
-  onColorChange: (color: string) => void;
-}
+type Props = {
+  readonly onColorChange: (color: HexColor) => void;
+};
 
-const Palette = ({ onColorChange }: IPalette) => {
-  const { drawingState, setPaletteColors } = useDrawingContext();
-  const [isPickerShown, setIsPickerShown] = useState<boolean>(false);
-  const colorInputRef = useRef<HTMLInputElement>(null);
-  const { paletteColors } = drawingState;
+export const Palette = React.memo((props: Props) => {
+  const drawingState = useAtomValue(drawingStateAtom);
 
-  const addCustomColor = (color: string) => {
-    if (paletteColors.includes(color)) {
-      toast.warn('Color is already in palette');
-      return;
-    }
-
-    toast.success('Color added to palette');
-    return setPaletteColors([...paletteColors, color]);
-  };
-
-  const handlePaletteChange = () => {
-    if (!isPickerShown) {
-      setIsPickerShown(true);
-      return;
-    }
-
-    addCustomColor(colorInputRef.current?.value || '');
-    setIsPickerShown(false);
-  };
-
-  const paletteColorBtnCn = clsx(
-    'w-6 h-6 hover:scale-125 transition-transform duration-200',
-    {
-      'pointer-events-none grayscale': isPickerShown,
-    }
+  const paletteColorBtnCn = React.useMemo(
+    () => cn('w-6 h-6 hover:scale-125 transition-transform duration-200'),
+    []
   );
 
   return (
-    <>
-      <div className="inner-widget !grid grid-cols-7 !gap-0.5">
-        {paletteColors.map((color, idx) => (
-          <button
-            key={idx}
-            className={paletteColorBtnCn}
-            style={{ backgroundColor: color }}
-            onClick={() => onColorChange(color)}
-          ></button>
-        ))}
-        <Button
-          tooltip="Pick a color"
-          className="!p-0 hover:scale-125 rounded-none bg-transparent"
-          onClick={handlePaletteChange}
-          icon={isPickerShown ? <Check /> : <Plus />}
+    <div className='grid grid-cols-8 gap-1'>
+      {drawingState.paletteColors.map((color, index) => (
+        <button
+          key={index}
+          type='button'
+          className={paletteColorBtnCn}
+          style={{ backgroundColor: color }}
+          onClick={() => props.onColorChange(color)}
         />
-        {isPickerShown && (
-          <div className="w-6 h-6">
-            <input
-              ref={colorInputRef}
-              type="color"
-              defaultValue={paletteColors[0]}
-              className="w-full p-0 border-none cursor-pointer"
-            />
-          </div>
-        )}
-      </div>
-    </>
+      ))}
+    </div>
   );
-};
-
-export default Palette;
+});

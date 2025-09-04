@@ -7,8 +7,8 @@
 ### **How to run the app:**
 
 - `clone the repository`
-- `npm i`
-- `npm run dev`
+- `pnpm i`
+- `pnpm  dev`
 
 ### **At the moment, the `drawing-tool` can:**
 
@@ -18,4 +18,3 @@
 4.  download your drawings
 5.  add custom colors to the palette
 6.  change the `line-width` of both `pencil` and `eraser` tools
-7.  `zoom in` and `zoom out` your drawings (works by using buttons on the panel on the right bottom corner on screen, by using keyboard shortcuts [`(cmd|ctrl)+=`, `(cmd|ctrl+-)`, `(cmd|ctrl)+0`] and by scrolling the mouse wheel)

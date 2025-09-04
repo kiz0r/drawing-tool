@@ -1,0 +1,6 @@
+{
+  "extends": ["./biome/formatter.json", "./biome/linter.json", "./biome/vscode.json"],
+  "files": {
+    "includes": ["**"]
+  }
+}
