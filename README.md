@@ -8,7 +8,7 @@
 
 - `clone the repository`
 - `pnpm i`
-- `pnpm  dev`
+- `pnpm dev`
 
 ### **At the moment, the `drawing-tool` can:**
 
@@ -16,5 +16,4 @@
 2.  change the `canvas background color`
 3.  erase your drawings either manually or with `clear-all` button
 4.  download your drawings
-5.  add custom colors to the palette
-6.  change the `line-width` of both `pencil` and `eraser` tools
+5.  change the `line-width` of both `pencil` and `eraser` tools
